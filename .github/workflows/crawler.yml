@@ -20,7 +20,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
         with:
-          ref: main
+          ref: master               # <--- 1. 这里改成了 master
           fetch-depth: 0
           clean: true
           
@@ -74,13 +74,13 @@ jobs:
           git config --global user.email 'actions@github.com'
           
           echo "🔄 Syncing with remote..."
-          git fetch origin main
+          git fetch origin master     # <--- 2. 这里改成了 master
           
           # 保存当前更改
           git stash --include-untracked || echo "Nothing to stash"
           
           # 同步到远程最新
-          git reset --hard origin/main
+          git reset --hard origin/master  # <--- 3. 这里改成了 master
           
           # 恢复本次更改
           git stash pop || echo "Nothing to pop"
@@ -98,7 +98,8 @@ jobs:
           
           echo "⬆️ Pushing changes with retry..."
           for i in {1..5}; do
-            git pull --rebase origin main && git push origin main && {
+            # ↓↓↓ 4. 下面这一行最重要，pull 和 push 都改成了 master
+            git pull --rebase origin master && git push origin master && {
               echo "✅ Successfully pushed on attempt $i"
               exit 0
             }
